@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                   String    @id @unique @default(uuid())
+  name                 String
+  email                String    @unique
+  password             String?
+  email_confirmation   Boolean?
+  confirmation_sent_at DateTime?
+  created_at           DateTime  @default(now())
+  access_token         String?
+  refreash_token       String?
+  Member               Member[]
+}
+
+model Member {
+  id             String  @id @default(uuid())
+  role           Role
+  user_id        String
+  groupId        String
+  user           User    @relation(fields: [user_id], references: [id])
+  Group          Group   @relation(fields: [groupId], references: [id])
+  user_select_id String?
+}
+
+model Invitation {
+  id          String   @id @default(uuid())
+  expire_time DateTime
+  group_id    String   @unique
+  group       Group    @relation(fields: [group_id], references: [id])
+}
+
+model Group {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  created_at  DateTime    @default(now())
+  members     Member[]
+  Invitation  Invitation?
+  max_value   Int
+  min_value   Int
+  date        DateTime
+  start       Boolean     @default(false)
+}
