@@ -85,7 +85,7 @@ DATABASE_URL="postgresql://docker:docker@localhost:5432/apipg?schema=public"
 ```
 Depois, instale as dependências e inicie os containers:
 ```bash
-npm install && docker compose up -d
+npm install && docker compose up -d && npx prisma migrate dev
 ```
 
 Por fim, inicie o servidor:
